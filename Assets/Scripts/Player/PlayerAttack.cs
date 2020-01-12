@@ -18,8 +18,12 @@ public class PlayerAttack : MonoBehaviour
     public float normalDashTime = 0.15f;
     [Header("Special")]
     public float specialAttackDelay = 0.2f;
-    public float specialAttackDash = 50f;
+    //public float specialAttackDash = 50f;
     public float specialDashTime = 0.15f;
+
+    public GameObject normalHitBox;
+    public GameObject specialHitBox;
+    private GameObject currentHitbox;
 
     public void Init(Player player)
     {
@@ -49,11 +53,15 @@ public class PlayerAttack : MonoBehaviour
     {
         if (special)
         {
+            specialHitBox.SetActive(true);
+            currentHitbox = specialHitBox;
             ResetAttackType();
             Player.player.GetAsuraMove().SetCharState(PlayerMove.CharacterState.SpecialAttack);
         }
         else
         {
+            normalHitBox.SetActive(true);
+            currentHitbox = normalHitBox;
             if (this.attackType == 1)
             {
                 Player.player.GetAsuraMove().SetCharState(PlayerMove.CharacterState.Attack1);
@@ -87,6 +95,7 @@ public class PlayerAttack : MonoBehaviour
         if (stateInfo.normalizedTime >= 0.6f
             && (stateInfo.IsName("Attack1")|| stateInfo.IsName("Attack2")|| stateInfo.IsName("SpecialAttack")))
         {
+            currentHitbox.SetActive(false);
             Player.player.PlayIdle();
         }
     }
@@ -95,8 +104,17 @@ public class PlayerAttack : MonoBehaviour
         yield return base.StartCoroutine(this.WaitForSeconds(special ? specialAttackDelay : normalAttackDelay));
         if (this.canAttackDash)
         {
-            Player.player.GetAsuraMove().AttackDash(pController.GetPlayerTransform().forward
-                *(special ? specialAttackDash : normalAttackDash), (special ? specialDashTime : normalDashTime));
+            float time = normalDashTime;
+            float dis = normalAttackDash;
+            if (special)
+            {
+                time = specialDashTime;
+                float mouseDis=(Vector3.Distance(pController.GetPlayerInput().GetMousePos()
+                     , pController.GetPlayerTransform().position))*20f;
+                dis = mouseDis;
+            }
+            pController.GetAsuraMove().AttackDash(pController.GetPlayerTransform().forward
+                *dis, time);
         }
     }
     private IEnumerator WaitForSeconds(float numberOfSeconds)

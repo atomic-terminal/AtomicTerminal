@@ -6,6 +6,7 @@ using System;
 public class PlayerInput
 {
     private Player pController;
+    private Vector3 mousePos;
     public void Init(Player player)
     {
         this.pController = player;
@@ -56,15 +57,19 @@ public class PlayerInput
         float distance = 0f;
         if (plane.Raycast(ray, out distance))
         {
-            return ray.GetPoint(distance);
+            return mousePos= ray.GetPoint(distance);
         }
         return Vector3.zero;
     }
     private void LookAt()
     {
-        Player.player.LookAt(this.LookAtVector(1.5f));
+        Player.player.LookAt(this.LookAtVector(0));
     }
 
+    public Vector3 GetMousePos()
+    {
+        return mousePos;
+    }
     private void AttackAnim(bool lookAt,bool special=false)
     {
         if (Player.player.GetPlayerAttack().CanAttack(true))

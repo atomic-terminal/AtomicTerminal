@@ -62,20 +62,26 @@ public class PlayerMove : MonoBehaviour
             //Debug.Log(groundHit.distance);
         }
     }
-
     [Header("Movement")]
     [SerializeField]
     private float groundHeight = 0.15f;
     [SerializeField]
     private float gravity = 20f;
     [SerializeField]
+    private float stopMovementVelocity = 1f;
+    [SerializeField]
+    private float normalRunSpeed = 10f;
+    [Header("Lerp")]
+    [SerializeField]
+    private bool lerpable = true;
+    [SerializeField]
     private float rotateSpeed = 360;
     [SerializeField]
     private float smoothRotation = 100f;
     [SerializeField]
     private float speedSmoothing = 100f;
-    [SerializeField]
-    private float stopMovementVelocity = 1f;
+
+
 
     public void SetCharState(PlayerMove.CharacterState c)
     {
@@ -125,7 +131,7 @@ public class PlayerMove : MonoBehaviour
         {
             if (this._characterState != PlayerMove.CharacterState.Roll && this._characterState != PlayerMove.CharacterState.Running&&!IsAttacking())
             {
-                this.walkSpeed = 10;
+                this.walkSpeed = normalRunSpeed;
                 this._characterState = PlayerMove.CharacterState.Running;
             }
         }
@@ -164,7 +170,7 @@ public class PlayerMove : MonoBehaviour
             }
             else
             {
-                this.walkSpeed = 10;
+                this.walkSpeed = normalRunSpeed;
                 this.walkSpeed *= 1.5f;
             }
             if (m_rollTimer < rollDuration)
@@ -181,6 +187,7 @@ public class PlayerMove : MonoBehaviour
     #endregion
 
     #region move
+    private float h, v,hRaw,vRaw;
     private void ApplyGravity()
     {
         if (this.isControllable)
@@ -195,22 +202,26 @@ public class PlayerMove : MonoBehaviour
             }
         }
     }
+    private void UpdateWASD()
+    {
+        v = Input.GetAxis("Vertical");
+        h = Input.GetAxis("Horizontal");
+        vRaw = Input.GetAxisRaw("Vertical");
+        hRaw = Input.GetAxisRaw("Horizontal");
+    }
     private void UpdateSmoothedMovementDirection()
     {
         Vector3 a = this.cameraTransform.TransformDirection(Vector3.forward);
         Vector3 vector = new Vector3(a.x, 0f, a.z);
         a = vector.normalized;
         Vector3 a2 = new Vector3(a.z, 0f, -a.x);
-        float num = 0f;
-        float num2 = 0f;
-        num = Input.GetAxis("Vertical");
-        num2 = Input.GetAxis("Horizontal");
-        bool flag = this.isMoving;
-        this.isMoving = (Mathf.Abs(num2) > 0.1f || Mathf.Abs(num) > 0.1f);
-        Vector3 vector2 = num2 * a2 + num * a;
+        Vector3 vector2 = h * a2 + v * a;
         if (vector2 != Vector3.zero)
         {
-            this.moveDirection = Vector3.Slerp(this.moveDirection, vector2, this.rotateSpeed * Time.deltaTime);
+            if(lerpable)
+                this.moveDirection = Vector3.Slerp(this.moveDirection, vector2, this.rotateSpeed * Time.deltaTime);
+            else
+                this.moveDirection = vector2;
             this.moveDirection = this.moveDirection.normalized;
             this.playOnce = false;
         }
@@ -218,10 +229,16 @@ public class PlayerMove : MonoBehaviour
         float t = this.speedSmoothing * Time.deltaTime;
         if (this._characterState == PlayerMove.CharacterState.Roll && !this.IsColliding(pController.GetPlayerTransform().forward, false))
         {
-            this.moveSpeed = Mathf.Lerp(this.moveSpeed, this.walkSpeed, t);
+            if (lerpable)
+                this.moveSpeed = Mathf.Lerp(this.moveSpeed, this.walkSpeed, t);
+            else
+                this.moveSpeed = walkSpeed;
         }
         //this.playOnce = false;
-        this.moveSpeed = Mathf.Lerp(this.moveSpeed, this.walkSpeed, t);
+        if (lerpable)
+            this.moveSpeed = Mathf.Lerp(this.moveSpeed, this.walkSpeed, t);
+        else
+            this.moveSpeed = walkSpeed;
     }
     public void UpdateMoveDir()
     {
@@ -229,6 +246,7 @@ public class PlayerMove : MonoBehaviour
     }
     private void Update()
     {
+        this.UpdateWASD();
         this.UpdateSmoothedMovementDirection();
         this.ApplyGravity();
         Vector3 vector = this.moveDirection * this.moveSpeed + new Vector3(0f, this.verticalSpeed, 0f);
@@ -273,11 +291,9 @@ public class PlayerMove : MonoBehaviour
         }
         if (!IsAttacking())
         {
-            float vertical = Input.GetAxis("Vertical");
-            float horizontal = Input.GetAxis("Horizontal");
-            if ((vertical != 0 || horizontal != 0))
+            if ((v != 0 || h != 0))
             {
-                this.Rotating(horizontal, vertical);
+                this.Rotating(h, v);
             }
         }
     }
@@ -287,7 +303,9 @@ public class PlayerMove : MonoBehaviour
         this.m_CamForward = Vector3.Scale(this.cameraTransform.forward, new Vector3(1f, 0f, 1f)).normalized;
         forward = this.m_CamForward * vertical + this.cameraTransform.right * horizontal;
         Quaternion to = Quaternion.LookRotation(forward, Vector3.up);
-        Quaternion rotation = Quaternion.Lerp(base.transform.rotation, to, this.smoothRotation * Time.deltaTime);
+        Quaternion rotation = to;
+        if (lerpable)
+             rotation = Quaternion.Lerp(base.transform.rotation, to, this.smoothRotation * Time.deltaTime);
         base.transform.rotation = rotation;
     }
     #endregion

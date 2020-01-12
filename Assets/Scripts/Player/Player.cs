@@ -75,8 +75,8 @@ public class Player : MonoBehaviour
     private void Update()
     {
         this.pInput.InputProcess();
-        float vertical = Input.GetAxis("Vertical");
-        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+        float horizontal = Input.GetAxisRaw("Horizontal");
         if (this.pMove.GetCharState() == PlayerMove.CharacterState.Roll)
         {
             this.pMove.UpdateMoveDir();
