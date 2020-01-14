@@ -69,8 +69,6 @@ public class PlayerMove : MonoBehaviour
     private float gravity = 20f;
     [SerializeField]
     private float stopMovementVelocity = 1f;
-    [SerializeField]
-    private float normalRunSpeed = 10f;
     [Header("Lerp")]
     [SerializeField]
     private bool lerpable = true;
@@ -118,6 +116,7 @@ public class PlayerMove : MonoBehaviour
 
     public void SetAnimSpeeds()
     {
+        pController.GetPlayerAnim().SetFloat("MeleeAttackSpeed", pController.GetAttribute().MeleeAttackSpeed);
     }
     public void SetSpeed(float speed)
     {
@@ -131,7 +130,7 @@ public class PlayerMove : MonoBehaviour
         {
             if (this._characterState != PlayerMove.CharacterState.Roll && this._characterState != PlayerMove.CharacterState.Running&&!IsAttacking())
             {
-                this.walkSpeed = normalRunSpeed;
+                this.walkSpeed = pController.GetAttribute().MoveSpeed;
                 this._characterState = PlayerMove.CharacterState.Running;
             }
         }
@@ -170,7 +169,7 @@ public class PlayerMove : MonoBehaviour
             }
             else
             {
-                this.walkSpeed = normalRunSpeed;
+                this.walkSpeed = pController.GetAttribute().MoveSpeed;
                 this.walkSpeed *= 1.5f;
             }
             if (m_rollTimer < rollDuration)

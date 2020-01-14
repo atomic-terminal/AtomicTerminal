@@ -8,7 +8,7 @@ using UnityEngine;
 public class PlayerMoveEditor : Editor
 {
     PlayerMove thisMove;
-    SerializedProperty groundHeight,gravity,stopMovementVelocity,normalRunSpeed;
+    SerializedProperty groundHeight,gravity,stopMovementVelocity;
     SerializedProperty rotateSpeed, smoothRotation, speedSmoothing;
     SerializedProperty lerpable;
 
@@ -17,7 +17,6 @@ public class PlayerMoveEditor : Editor
         groundHeight = serializedObject.FindProperty("groundHeight");
         gravity = serializedObject.FindProperty("gravity");
         stopMovementVelocity = serializedObject.FindProperty("stopMovementVelocity");
-        normalRunSpeed = serializedObject.FindProperty("normalRunSpeed");
 
         rotateSpeed = serializedObject.FindProperty("rotateSpeed");
         smoothRotation = serializedObject.FindProperty("smoothRotation");
@@ -32,7 +31,6 @@ public class PlayerMoveEditor : Editor
         EditorGUILayout.PropertyField(groundHeight);
         EditorGUILayout.PropertyField(gravity);
         EditorGUILayout.PropertyField(stopMovementVelocity);
-        EditorGUILayout.PropertyField(normalRunSpeed);
 
         EditorGUILayout.PropertyField(lerpable);
 
