@@ -78,7 +78,12 @@ public class PlayerMove : MonoBehaviour
     private float smoothRotation = 100f;
     [SerializeField]
     private float speedSmoothing = 100f;
-
+    [Header("Roll")]
+    private float m_rollTimer;
+    [SerializeField]
+    private float rollDuration = 0.5f;
+    [SerializeField]
+    private bool rawInput = false;
 
 
     public void SetCharState(PlayerMove.CharacterState c)
@@ -155,8 +160,6 @@ public class PlayerMove : MonoBehaviour
 
 
     #region roll
-    private float m_rollTimer;
-    public float rollDuration = 0.5f;
     private void FixedUpdate()
     {
         this.Raycast();//check ground
@@ -186,7 +189,7 @@ public class PlayerMove : MonoBehaviour
     #endregion
 
     #region move
-    private float h, v,hRaw,vRaw;
+    private float h, v;
     private void ApplyGravity()
     {
         if (this.isControllable)
@@ -203,10 +206,16 @@ public class PlayerMove : MonoBehaviour
     }
     private void UpdateWASD()
     {
-        v = Input.GetAxis("Vertical");
-        h = Input.GetAxis("Horizontal");
-        vRaw = Input.GetAxisRaw("Vertical");
-        hRaw = Input.GetAxisRaw("Horizontal");
+        if (rawInput)
+        {
+            v = Input.GetAxisRaw("Vertical");
+            h = Input.GetAxisRaw("Horizontal");
+        }
+        else
+        {
+            v = Input.GetAxis("Vertical");
+            h = Input.GetAxis("Horizontal");
+        }
     }
     private void UpdateSmoothedMovementDirection()
     {

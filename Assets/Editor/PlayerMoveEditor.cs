@@ -8,12 +8,20 @@ using UnityEngine;
 public class PlayerMoveEditor : Editor
 {
     PlayerMove thisMove;
+
+    SerializedProperty rollDuration;
     SerializedProperty groundHeight,gravity,stopMovementVelocity;
     SerializedProperty rotateSpeed, smoothRotation, speedSmoothing;
-    SerializedProperty lerpable;
+    SerializedProperty lerpable, rawInput;
 
+    SerializedProperty groundLayer, obsLayer;
     void OnEnable()
     {
+        rollDuration = serializedObject.FindProperty("rollDuration");
+
+        groundLayer = serializedObject.FindProperty("groundLayer");
+        obsLayer = serializedObject.FindProperty("obsLayer");
+
         groundHeight = serializedObject.FindProperty("groundHeight");
         gravity = serializedObject.FindProperty("gravity");
         stopMovementVelocity = serializedObject.FindProperty("stopMovementVelocity");
@@ -22,17 +30,23 @@ public class PlayerMoveEditor : Editor
         smoothRotation = serializedObject.FindProperty("smoothRotation");
         speedSmoothing = serializedObject.FindProperty("speedSmoothing");
         lerpable = serializedObject.FindProperty("lerpable");
+        rawInput = serializedObject.FindProperty("rawInput");
         thisMove = (PlayerMove)target;
     }
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
+        EditorGUILayout.PropertyField(rollDuration);
+
+        EditorGUILayout.PropertyField(groundLayer);
+        EditorGUILayout.PropertyField(obsLayer);
 
         EditorGUILayout.PropertyField(groundHeight);
         EditorGUILayout.PropertyField(gravity);
         EditorGUILayout.PropertyField(stopMovementVelocity);
 
         EditorGUILayout.PropertyField(lerpable);
+        EditorGUILayout.PropertyField(rawInput);
 
         if (lerpable.boolValue)
         {
