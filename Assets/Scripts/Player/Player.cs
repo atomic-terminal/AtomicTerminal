@@ -18,7 +18,14 @@ public class Player : MonoBehaviour
     private PlayerBars playerBar;
 
     private float currentHP;
+    private bool deathConfirmed;
+    private Room room;
     #region get
+    public bool IsDead()
+    {
+        return this.deathConfirmed;
+    }
+
     public PlayerMove GetAsuraMove()
     {
         return this.pMove;
@@ -70,6 +77,18 @@ public class Player : MonoBehaviour
         UpdateHearts(true);
     }
 
+    public void SetPlayerRoom(Room p)
+    {
+        if (p == null && this.room != null)
+        {
+            this.room.RoomEnd();
+        }
+        this.room = p;
+    }
+    public void RoomTrigger(bool isStart = false, Room room = null)
+    {
+        this.SetPlayerRoom(null);
+    }
     public void PlayIdle()
     {
         this.pMove.SetCharState(PlayerMove.CharacterState.Idle);

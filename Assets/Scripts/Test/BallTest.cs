@@ -7,7 +7,8 @@ public class BallTest : MonoBehaviour
 {
     private Transform ballTransform;
     private Vector3 moveDir;
-    public LayerMask targetLayer;
+    public LayerMask obstacleLayer;
+    public LayerMask enemyLayer;
     public float moveSpeed;
     private void Start()
     {
@@ -37,10 +38,18 @@ public class BallTest : MonoBehaviour
         for (int i = 0; i < lineNum; i++)
         {
             Vector3 dir = Quaternion.AngleAxis(fieldAngle / lineNum * 2 * i, Vector3.down) * originDir;
-            if (Physics.Raycast(originPos, dir, out hitInfo, fieldDistance, targetLayer))
+            if (Physics.Raycast(originPos, dir, out hitInfo, fieldDistance, obstacleLayer))
             {
                 moveDir = Vector3.Reflect(moveDir, hitInfo.normal);
                 FXImpact(hitInfo);
+                if (0!=(enemyLayer.value& 1<<hitInfo.transform.gameObject.layer))
+                {
+                    Enemy e = hitInfo.transform.GetComponent<Enemy>();
+                    if (e!=null)
+                    {
+                        e.DepleteHP(1);
+                    }
+                }
                 break;
             }
         }

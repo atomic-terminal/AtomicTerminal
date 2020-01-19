@@ -92,9 +92,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd6d73aa6c0dba643b9cc25d03f25d6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLayer:
+  obstacleLayer:
     serializedVersion: 2
-    m_Bits: 1536
+    m_Bits: 5632
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 4096
   moveSpeed: 20
   fieldAngle: 90
   lineNum: 8

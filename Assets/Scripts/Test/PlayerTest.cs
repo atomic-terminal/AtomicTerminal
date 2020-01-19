@@ -7,17 +7,18 @@ using UnityEngine;
 
 public class PlayerTest : MonoBehaviour
 {
+    public Room room;
     [Conditional("EnableTest")]
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            Player.player.HPLoss(1);
-        }
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            Player.player.BloodHeal(2);
-        }
+        //if (Input.GetKeyDown(KeyCode.L))
+        //{
+        //    Player.player.HPLoss(1);
+        //}
+        //if (Input.GetKeyDown(KeyCode.H))
+        //{
+        //    Player.player.BloodHeal(2);
+        //}
         if (Input.GetKeyDown(KeyCode.B))
         {
             ballmove = !ballmove;
@@ -29,12 +30,24 @@ public class PlayerTest : MonoBehaviour
                 ball[i].DoUpdate();
             }
         }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            GameSetUp.setUp.Setup();
+            GameManager.gManager.SetGameState(GameState.Running);//test
+        }
+        if (GameManager.gManager.GetGameState()== GameState.GameOver)
+        {
+            ballmove = false;
+        }
     }
     [Conditional("EnableTest")]
     private void Start()
     {
         ball = new List<BallTest>();
         StartCoroutine(CreateCubes(cubeCount));
+
+        GameSetUp.setUp.Setup();
+        GameManager.gManager.SetGameState(GameState.Running);//test
         //StartCoroutine(CreateBalls(ballCount));
     }
     public Transform ballParent;
