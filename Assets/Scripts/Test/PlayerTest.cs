@@ -43,7 +43,7 @@ public class PlayerTest : MonoBehaviour
     [Conditional("EnableTest")]
     private void Start()
     {
-        ball = new List<BallTest>();
+        ball = new List<BallRC>();
         StartCoroutine(CreateCubes(cubeCount));
 
         GameSetUp.setUp.Setup();
@@ -51,9 +51,9 @@ public class PlayerTest : MonoBehaviour
         //StartCoroutine(CreateBalls(ballCount));
     }
     public Transform ballParent;
-    public BallTest ballPrefab;
+    public BallRC ballPrefab;
     public GameObject cubePrefab;
-    private List<BallTest> ball;
+    private List<BallRC> ball;
     
     private bool ballmove;
     public int cubeCount = 50;
@@ -89,7 +89,7 @@ public class PlayerTest : MonoBehaviour
             } while (points.Contains(temp));
             points.Add(temp);
             GameObject go = GameObject.Instantiate(ballPrefab.gameObject)as GameObject;
-            ball.Add(go.GetComponent<BallTest>());
+            ball.Add(go.GetComponent<BallRC>());
             go.transform.localPosition = new Vector3(temp.x,-0.25f,temp.y);
 
             go.transform.SetParent(ballParent);

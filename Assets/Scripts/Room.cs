@@ -12,8 +12,28 @@ public class Room : MonoBehaviour
     [SerializeField]
     private List<string> spawnsList;
     [SerializeField]
+    private int waveCount;
+    [SerializeField]
     [Header("Spawns")]
     private List<GameObject> defaultSpawns;
+
+    public List<GameObject> GetSpawnPoints()
+    {
+        List<GameObject> list = new List<GameObject>();
+        foreach (GameObject gameObject in this.defaultSpawns)
+        {
+            if (gameObject.activeInHierarchy)
+            {
+                list.Add(gameObject);
+            }
+        }
+        return list;
+    }
+    public List<string> GetSpawnList()
+    {
+        return this.spawnsList;
+    }
+
     public void LoadEnemies()
     {
         List<GameObject> list = new List<GameObject>();
@@ -43,7 +63,7 @@ public class Room : MonoBehaviour
             enemy.MarkReady();
             num++;
         }
-        EnemyManager.eManager.SetCreatureCount(num);
+        EnemyManager.eManager.SetCreatureCount(num, waveCount);
     }
     public void RoomEnd()
     {

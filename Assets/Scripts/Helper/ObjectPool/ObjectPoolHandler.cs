@@ -8,6 +8,7 @@ namespace MyTools {
 	public class PoolInfo {
 		public string poolName;
 		public GameObject prefab;
+        public Transform poolParent;
 		public int poolSize;
 		public bool fixedSize;
 	}
@@ -17,13 +18,15 @@ namespace MyTools {
 
 		private bool fixedSize;
 		private GameObject poolObjectPrefab;
+        private Transform poolObjectParent;
 		private int poolSize;
 		private string poolName;
 
-		public Pool(string poolName, GameObject poolObjectPrefab, int initialCount, bool fixedSize) {
+		public Pool(string poolName, GameObject poolObjectPrefab,Transform poolObjectParent, int initialCount, bool fixedSize) {
 			this.poolName = poolName;
 			this.poolObjectPrefab = poolObjectPrefab;
-			this.poolSize = initialCount;
+            this.poolObjectParent = poolObjectParent;
+            this.poolSize = initialCount;
 			this.fixedSize = fixedSize;
 			//初始化池
 			for(int index = 0; index < initialCount; index++) {
@@ -51,6 +54,7 @@ namespace MyTools {
 			}
 			//set name
 			po.poolName = poolName;
+            po.transform.SetParent(poolObjectParent);
 			return po;
 		}
 
@@ -65,10 +69,7 @@ namespace MyTools {
 			if(availableObjStack.Count > 0) {
 				po = availableObjStack.Pop();
 			} else if(fixedSize == false) {
-				//increment size var, this is for info purpose only
 				poolSize++;
-				//Debug.Log(string.Format("Growing pool {0}. New size: {1}",poolName,poolSize));
-				//create new object
 				po = NewObjectInstance();
 			} else {
 				Debug.LogWarning("No object available & cannot grow pool: " + poolName);
@@ -94,10 +95,6 @@ namespace MyTools {
 		public void ReturnObjectToPool(PoolObject po) {
 			
 			if(poolName.Equals(po.poolName)) {
-				
-				/* we could have used availableObjStack.Contains(po) to check if this object is in pool.
-				 * While that would have been more robust, it would have made this method O(n) 
-				 */
 				if(po.isPooled) {
 					Debug.LogWarning(po.gameObject.name + " is already in pool. Why are you trying to return it again? Check usage.");	
 				} else {
@@ -142,7 +139,7 @@ namespace MyTools {
 		private void CreatePools() {
 			foreach (PoolInfo currentPoolInfo in poolInfo) {
 				
-				Pool pool = new Pool(currentPoolInfo.poolName, currentPoolInfo.prefab, 
+				Pool pool = new Pool(currentPoolInfo.poolName, currentPoolInfo.prefab, currentPoolInfo.poolParent,
 				                     currentPoolInfo.poolSize, currentPoolInfo.fixedSize);
 
 				
@@ -166,7 +163,6 @@ namespace MyTools {
 			} else {
 				Debug.LogError("Invalid pool name specified: " + poolName);
 			}
-			
 			return result;
 		}
 

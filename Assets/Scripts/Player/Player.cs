@@ -25,7 +25,10 @@ public class Player : MonoBehaviour
     {
         return this.deathConfirmed;
     }
-
+    public Room GetRoom()
+    {
+        return this.room;
+    }
     public PlayerMove GetAsuraMove()
     {
         return this.pMove;

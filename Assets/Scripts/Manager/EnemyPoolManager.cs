@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MyTools;
 
 public class EnemyPoolManager : MonoBehaviour
 {
@@ -43,33 +44,27 @@ public class EnemyPoolManager : MonoBehaviour
     }
     private Enemy FetchPooled(Vector3 pos, string name, Room p = null)
     {
-        foreach (Enemy enemy in this.enemyPool)
-        {
-            if (enemy.GetUnitName().ToString() == name && enemy.IsDead())
-            {
-                enemy.Init();
-                enemy.MoveEnemy(new Vector3(pos.x,0, pos.z));
-                if (p != null)
-                {
-                    p.AddEnemy(enemy);
-                }
-                return enemy;
-            }
-        }
-        this.LoadEnemy(pos, name, p);
-        return null;
+        //foreach (Enemy enemy in this.enemyPool)
+        //{
+        //    if (enemy.GetUnitName().ToString() == name && enemy.IsDead())
+        //    {
+        //        enemy.Init();
+        //        enemy.MoveEnemy(new Vector3(pos.x,0, pos.z));
+        //        if (p != null)
+        //        {
+        //            p.AddEnemy(enemy);
+        //        }
+        //        return enemy;
+        //    }
+        //}
+        return this.LoadEnemy(pos, name, p);
+        //return null;
     }
     private Enemy LoadEnemy(Vector3 pos, string name, Room p)
     {
         GameObject gameObject = null;
-        try
-        {
-            gameObject = (UnityEngine.Object.Instantiate(Resources.Load(name)) as GameObject);
-        }
-        catch
-        {
-            Debug.LogError(name);
-        }
+        //gameObject = (UnityEngine.Object.Instantiate(Resources.Load(name)) as GameObject);
+        gameObject = ObjectPoolHandler.instance.GetObjectFromPool(name, Vector3.zero, Quaternion.identity);
         gameObject.transform.parent = base.transform;
         Enemy component = gameObject.GetComponent<Enemy>();
         if (p != null)
@@ -80,5 +75,15 @@ public class EnemyPoolManager : MonoBehaviour
         component.MoveEnemy(new Vector3(pos.x,0, pos.z));
         this.enemyPool.Add(component);
         return component;
+    }
+
+    public Enemy FetchUnit(string unitName, Vector3 pos, Room p)
+    {
+        Enemy enemy = this.FetchPooled(pos, unitName, p);
+        if (enemy == null)
+        {
+            Debug.LogError(unitName + " Fetching failed");
+        }
+        return enemy;
     }
 }
