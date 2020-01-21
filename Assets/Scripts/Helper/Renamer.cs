@@ -45,6 +45,7 @@ public class Renamer : MonoBehaviour
         }
     }
 
+
     public bool toAppend;
 
     public string fromName;

@@ -5,7 +5,7 @@ using UnityEngine;
 using MyTools;
 public enum EnemyEnum
 {
-    Cube
+    Robot
 }
 public class Enemy : MonoBehaviour
 {

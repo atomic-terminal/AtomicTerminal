@@ -9,7 +9,9 @@ public class Room : MonoBehaviour
     [Header("Room Start / End")]
     [SerializeField]
     private List<GameObject> portals;
+
     [SerializeField]
+    private List<EnemyEnum> enemySpawnsList;
     private List<string> spawnsList;
     [SerializeField]
     private int waveCount;
@@ -33,7 +35,14 @@ public class Room : MonoBehaviour
     {
         return this.spawnsList;
     }
-
+    private void Awake()
+    {
+        spawnsList = new List<string>();
+        for (int i = 0; i < enemySpawnsList.Count; i++)
+        {
+            spawnsList.Add(enemySpawnsList[i].ToString());
+        }
+    }
     public void LoadEnemies()
     {
         List<GameObject> list = new List<GameObject>();
